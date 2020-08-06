@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.apiman</groupId>
     <artifactId>apiman-manager-api</artifactId>
-    <version>1.5.2-SNAPSHOT</version>
+    <version>1.5.8-SNAPSHOT</version>
   </parent>
   <artifactId>apiman-manager-api-micro</artifactId>
   <packaging>bundle</packaging>
@@ -32,6 +32,10 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-common-servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>apiman-common-es</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

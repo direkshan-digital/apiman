@@ -17,7 +17,7 @@
 package io.apiman.manager.test.es;
 
 import io.apiman.common.es.util.ApimanEmbeddedElastic;
-import io.apiman.gateway.engine.es.DefaultESClientFactory;
+import io.apiman.common.es.util.DefaultEsClientFactory;
 import io.apiman.manager.api.beans.metrics.ClientUsagePerApiBean;
 import io.apiman.manager.api.beans.metrics.HistogramIntervalType;
 import io.apiman.manager.api.beans.metrics.ResponseStatsDataPoint;
@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
@@ -85,6 +86,7 @@ public class ESMetricsAccessorTest {
             .withElasticVersion(ApimanEmbeddedElastic.getEsBuildVersion())
             .withDownloadDirectory(esDownloadCache)
             .withSetting(PopularProperties.CLUSTER_NAME, "apiman")
+            .withStartTimeout(1, TimeUnit.MINUTES)
             .withCleanInstallationDirectoryOnStop(true)
             .build()
             .start();
@@ -93,7 +95,7 @@ public class ESMetricsAccessorTest {
         client = createJestClient();
         client.execute(new DeleteIndex.Builder("apiman_metrics").build());
         client.execute(new Flush.Builder().force().build());
-        DefaultESClientFactory.clearClientCache();
+        DefaultEsClientFactory.clearClientCache();
         // Because of the delete above, the metrics fields need reinitialising with the index
         // mappings otherwise everything will screw up. See apiman_metrics-settings.json
         client = createJestClient();
@@ -102,7 +104,7 @@ public class ESMetricsAccessorTest {
         loadTestData();
 
         client.execute(new Flush.Builder().force().build());
-        DefaultESClientFactory.clearClientCache();
+        DefaultEsClientFactory.clearClientCache();
     }
 
     private static JestClient createJestClient() {
@@ -111,7 +113,7 @@ public class ESMetricsAccessorTest {
         config.put("client.host", "localhost");
         config.put("client.port", "19250");
         config.put("client.initialize", "true");
-        return new DefaultESClientFactory().createClient(config, "apiman_metrics");
+        return new DefaultEsClientFactory().createClient(config, "apiman_metrics");
     }
 
     private static void loadTestData() throws Exception {
